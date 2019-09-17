@@ -1,2 +1,2 @@
-# TimeSeriesForecastingAzureVisualInterface
-Build a model from start to finish to project sales using a Time Series Forecasting Regression model. Sample code to process data in c# or python and then build the build with no code Azure Machine Learning Visual Interface.
+# Time Series Forecasting Azure Visual Interface
+Build a model from start to finish to project sales using a Time Series Forecasting Regression model. This repo has sample code to process data in C# or python and then you can build the build with no code Azure Machine Learning Visual Interface.
