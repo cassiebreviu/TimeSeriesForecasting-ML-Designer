@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace IgniteAimlDataApp.Model
 {
@@ -15,10 +17,8 @@ namespace IgniteAimlDataApp.Model
         public int WeekOfYear { get; set; }
         public bool IsUsNewYearsDay { get; set; }
         public bool IsUsLaborDay { get; set; }
-        public bool IsUsThanksgivingDay { get; set; }
         public bool IsBlackFriday { get; set; }
         public bool IsChristmasDay { get; set; }
-        public bool IsWeekend { get; set; }
         public double FreqCos1 { get; set; }
         public double FreqSin1 { get; set; }
         public double FreqCos2 { get; set; }
@@ -56,6 +56,9 @@ namespace IgniteAimlDataApp.Model
         public double Lag25 { get; set; }
         public double Lag26 { get; set; }
 
+        [JsonIgnore]
+        public List<DateTime> DatesInWeek { get; set; }
+
         public static ForecastingData FromCsv(string csvLine)
         {
             string[] values = csvLine.Split(',');
@@ -64,6 +67,12 @@ namespace IgniteAimlDataApp.Model
             forecastingData.ID2 = Convert.ToInt32(values[1]);
             forecastingData.Time = Convert.ToDateTime(values[2]);
             forecastingData.Value = Convert.ToDouble(values[3]);
+            forecastingData.DatesInWeek = new List<DateTime>();
+
+            for (var dt = forecastingData.Time; dt <= forecastingData.Time.AddDays(6); dt = dt.AddDays(1))
+            {
+                forecastingData.DatesInWeek.Add(dt);
+            }
             return forecastingData;
         }
 

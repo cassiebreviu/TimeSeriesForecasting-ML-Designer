@@ -10,7 +10,7 @@ namespace IgniteAimlDataApp.DataLogic
     {
         public List<ForecastingData> GetProcessedDataForScore(int id1, int id2, int weeksToPredict)
         {
-            //Load forecasting data and filter by ids needed for prediction.
+            // Load forecasting data and filter by ids needed for prediction.
             var forecastingData = DataAccess.GetForecastingDataFromLocal()
                                             .Where(item => item.ID1 == id1 && item.ID2 == id2)
                                             .ToList();
@@ -22,15 +22,18 @@ namespace IgniteAimlDataApp.DataLogic
             for (int i = 0; i < weeksToPredict; i++)
             {
                 latestDate = latestDate.AddDays(7);
-                var forcastingDataItem = new ForecastingData { ID1 = id1,
-                                                               ID2 = id2,
-                                                               Time = latestDate,
-                                                               Value = 0,
-                                                               RDPI = rdpiData.Last().rdpi};
+                var forcastingDataItem = new ForecastingData
+                {
+                    ID1 = id1,
+                    ID2 = id2,
+                    Time = latestDate,
+                    Value = 0,
+                    RDPI = rdpiData.Last().rdpi
+                };
                 forecastingData.Add(forcastingDataItem);
             }
 
-           
+
 
             // Create Time Features
             forecastingData = CreateTimeFeatures(forecastingData, rdpiData);
@@ -79,10 +82,20 @@ namespace IgniteAimlDataApp.DataLogic
                 item.WeekOfMonth = Convert.ToInt32(Math.Ceiling(item.Time.Day / 7.0));
                 item.WeekOfYear = calendar.GetWeekOfYear(item.Time, calendarWeekRule, firstDayOfWeek);
 
-                //TODO: calc holidays. defaulted to false right now
+                // 4th Friday in November
+                item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
+                                                                 date.DayOfWeek == DayOfWeek.Friday
+                                                                 && date.Day > 22
+                                                                 && date.Day < 29);
 
-                // Log Transform to normalize values.
-                item.Value = Math.Log(item.Value);
+                // 1st Monday in September
+                item.IsUsLaborDay = item.DatesInWeek.Any(date => date.Month == 9
+                                                         && date.DayOfWeek == DayOfWeek.Monday
+                                                         && date.Day < 8);
+                // 25th of December
+                item.IsChristmasDay = item.DatesInWeek.Any(date => date.Month == 12 && date.Day == 25);
+                // 1st of January
+                item.IsUsNewYearsDay = item.DatesInWeek.Any(date => date.Month == 1 && date.Day == 1);
             }
             return forecastData;
         }
@@ -90,8 +103,8 @@ namespace IgniteAimlDataApp.DataLogic
         public List<ForecastingData> CreateLagFeatures(List<ForecastingData> forecastData)
         {
             // Populate Lag features for previous 26 weeks.
-           
-            for (int i = forecastData.Count-1; i > 26; i--)
+
+            for (int i = forecastData.Count - 1; i > 26; i--)
             {
                 forecastData[i].Lag1 = forecastData[i - 1].Value;
                 forecastData[i].Lag2 = forecastData[i - 2].Value;
