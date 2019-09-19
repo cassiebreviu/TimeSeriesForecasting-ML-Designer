@@ -1,9 +1,9 @@
-﻿using DataProcessApp.Model;
+﻿using IgniteAimlDataApp.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DataProcessApp.DataLogic
+namespace IgniteAimlDataApp.DataLogic
 {
     public class DataProcess
     {

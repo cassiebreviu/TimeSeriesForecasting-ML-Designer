@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DataProcessApp.Model
+namespace IgniteAimlDataApp.Model
 {
     public class ForecastingData
     {
