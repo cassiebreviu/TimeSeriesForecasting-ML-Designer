@@ -15,10 +15,6 @@ namespace IgniteAimlDataApp.DataLogic
                                             .ToList();
             // Add dates for weeks to predict.
             forecastingData = AddWeeksToPredict(forecastingData, weeksToPredict, storeID1, itemID2);
-            // Create Time Features
-            forecastingData = CreateTimeFeatures(forecastingData);
-            // Create Fourier Features
-            forecastingData = CreateFourierFeatures(forecastingData);
             // Create Lag Features
             forecastingData = CreateLagFeatures(forecastingData);
             return forecastingData;
@@ -47,59 +43,60 @@ namespace IgniteAimlDataApp.DataLogic
                 {
                     forcastingDataItem.DatesInWeek.Add(dt);
                 }
-
+                // Create Time Features for new week.
+                forcastingDataItem = CreateTimeFeatures(forcastingDataItem);
+                // Create Fourier Features for new week.
+                forcastingDataItem = CreateFourierFeatures(forcastingDataItem);
                 forecastData.Add(forcastingDataItem);
             }
             return forecastData;
 
         }
-        public List<ForecastingData> CreateFourierFeatures(List<ForecastingData> forecastData)
+        public ForecastingData CreateFourierFeatures(ForecastingData forecastData)
         {
             // Set seasonality to 52 which is the number of weeks in a year.
 
             var seasonality = 52;
-            foreach (var item in forecastData)
-            {
-                item.FreqCos1 = Math.Cos(item.WeekOfYear * 2 * Math.PI * 1 / seasonality);
-                item.FreqSin1 = Math.Sin(item.WeekOfYear * 2 * Math.PI * 1 / seasonality);
 
-                item.FreqCos2 = Math.Cos(item.WeekOfYear * 2 * Math.PI * 2 / seasonality);
-                item.FreqSin2 = Math.Sin(item.WeekOfYear * 2 * Math.PI * 2 / seasonality);
+            forecastData.FreqCos1 = Math.Cos(forecastData.WeekOfYear * 2 * Math.PI * 1 / seasonality);
+            forecastData.FreqSin1 = Math.Sin(forecastData.WeekOfYear * 2 * Math.PI * 1 / seasonality);
 
-                item.FreqCos3 = Math.Cos(item.WeekOfYear * 2 * Math.PI * 3 / seasonality);
-                item.FreqSin3 = Math.Sin(item.WeekOfYear * 2 * Math.PI * 3 / seasonality);
+            forecastData.FreqCos2 = Math.Cos(forecastData.WeekOfYear * 2 * Math.PI * 2 / seasonality);
+            forecastData.FreqSin2 = Math.Sin(forecastData.WeekOfYear * 2 * Math.PI * 2 / seasonality);
 
-                item.FreqCos4 = Math.Cos(item.WeekOfYear * 2 * Math.PI * 4 / seasonality);
-                item.FreqSin4 = Math.Sin(item.WeekOfYear * 2 * Math.PI * 4 / seasonality);
+            forecastData.FreqCos3 = Math.Cos(forecastData.WeekOfYear * 2 * Math.PI * 3 / seasonality);
+            forecastData.FreqSin3 = Math.Sin(forecastData.WeekOfYear * 2 * Math.PI * 3 / seasonality);
 
-            }
+            forecastData.FreqCos4 = Math.Cos(forecastData.WeekOfYear * 2 * Math.PI * 4 / seasonality);
+            forecastData.FreqSin4 = Math.Sin(forecastData.WeekOfYear * 2 * Math.PI * 4 / seasonality);
+
+
             return forecastData;
         }
 
-        public List<ForecastingData> CreateTimeFeatures(List<ForecastingData> forecastData)
+        public ForecastingData CreateTimeFeatures(ForecastingData forecastData)
         {
-            foreach (var item in forecastData)
-            {
-                item.Year = item.Time.Year;
-                item.Month = item.Time.Month;
-                item.WeekOfMonth = Convert.ToInt32(Math.Ceiling(item.Time.Day / 7.0));
-                item.WeekOfYear = Convert.ToInt32(Math.Ceiling(item.Time.DayOfYear / 7.0));
 
-                // 4th Friday in November
-                item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
-                                                                date.DayOfWeek == DayOfWeek.Friday
-                                                                && date.Day > 22
-                                                                && date.Day < 29);
+            forecastData.Year = forecastData.Time.Year;
+            forecastData.Month = forecastData.Time.Month;
+            forecastData.WeekOfMonth = Convert.ToInt32(Math.Ceiling(forecastData.Time.Day / 7.0));
+            forecastData.WeekOfYear = Convert.ToInt32(Math.Ceiling(forecastData.Time.DayOfYear / 7.0));
 
-                // 1st Monday in September
-                item.IsUsLaborDay = item.DatesInWeek.Any(date => date.Month == 9
-                                                         && date.DayOfWeek == DayOfWeek.Monday
-                                                         && date.Day < 8);
-                // 25th of December
-                item.IsChristmasDay = item.DatesInWeek.Any(date => date.Month == 12 && date.Day == 25);
-                // 1st of January
-                item.IsUsNewYearsDay = item.DatesInWeek.Any(date => date.Month == 1 && date.Day == 1);
-            }
+            // 4th Friday in November
+            forecastData.IsBlackFriday = forecastData.DatesInWeek.Any(date => date.Month == 11 &&
+                                                            date.DayOfWeek == DayOfWeek.Friday
+                                                            && date.Day > 22
+                                                            && date.Day < 29);
+
+            // 1st Monday in September
+            forecastData.IsUsLaborDay = forecastData.DatesInWeek.Any(date => date.Month == 9
+                                                     && date.DayOfWeek == DayOfWeek.Monday
+                                                     && date.Day < 8);
+            // 25th of December
+            forecastData.IsChristmasDay = forecastData.DatesInWeek.Any(date => date.Month == 12 && date.Day == 25);
+            // 1st of January
+            forecastData.IsUsNewYearsDay = forecastData.DatesInWeek.Any(date => date.Month == 1 && date.Day == 1);
+
             return forecastData;
         }
 
