@@ -28,8 +28,15 @@ namespace IgniteAimlDataApp.DataLogic
                     ID2 = itemID2,
                     Time = latestDate,
                     Value = 0,
-                    RDPI = rdpiData.Last().rdpi
+                    RDPI = rdpiData.Last().rdpi,
+                    DatesInWeek = new List<DateTime>()
                 };
+                // Populate dates in week for new items.
+                for (var dt = forcastingDataItem.Time; dt <= forcastingDataItem.Time.AddDays(6); dt = dt.AddDays(1))
+                {
+                    forcastingDataItem.DatesInWeek.Add(dt);
+                }
+
                 forecastingData.Add(forcastingDataItem);
             }
 
