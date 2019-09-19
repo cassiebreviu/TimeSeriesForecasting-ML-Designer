@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Globalization;
 
 namespace IgniteAimlDataApp.DataLogic
 {
@@ -77,20 +76,15 @@ namespace IgniteAimlDataApp.DataLogic
 
         public List<ForecastingData> CreateTimeFeatures(List<ForecastingData> forecastData, List<Rdpi> rdpiData)
         {
-            var cultureInfo = new CultureInfo("en-US");
-            var calendar = cultureInfo.Calendar;
-            var calendarWeekRule = cultureInfo.DateTimeFormat.CalendarWeekRule;
-            var firstDayOfWeek = cultureInfo.DateTimeFormat.FirstDayOfWeek;
-
             foreach (var item in forecastData)
             {
                 item.Year = item.Time.Year;
                 item.Month = item.Time.Month;
                 item.WeekOfMonth = Convert.ToInt32(Math.Ceiling(item.Time.Day / 7.0));
-                item.WeekOfYear = calendar.GetWeekOfYear(item.Time, calendarWeekRule, firstDayOfWeek);
+                item.WeekOfYear =  Convert.ToInt32(Math.Ceiling(item.Time.DayOfYear / 7.0));
 
                 // 4th Friday in November
-                item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
+                 item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
                                                                  date.DayOfWeek == DayOfWeek.Friday
                                                                  && date.Day > 22
                                                                  && date.Day < 29);
