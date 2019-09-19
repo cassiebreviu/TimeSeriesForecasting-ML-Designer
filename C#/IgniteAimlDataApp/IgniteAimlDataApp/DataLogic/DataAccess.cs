@@ -9,21 +9,21 @@ namespace IgniteAimlDataApp.DataLogic
     // Get data from local csv datasets.
     public static class DataAccess
     {
-        public static List<ForecastingData> GetForecastingDataFromLocal()
+        public static List<ForecastingData> GetForecastingDataFromLocal(string fileName)
         {
-            string sourceFile = $"{Environment.CurrentDirectory}\\Datasets\\ForecastingData.csv";
+            string sourceFile = $"{Environment.CurrentDirectory}\\Datasets\\{fileName}.csv";
             return File.ReadAllLines(sourceFile)
                                            .Skip(1)
-                                           .Select(v => ForecastingData.FromCsv(v))
+                                           .Select(line => ForecastingData.FromCsv(line))
                                            .ToList();
         }
 
-        public static List<Rdpi> GetRdpiDataFromLocal()
+        public static List<Rdpi> GetRdpiDataFromLocal(string fileName)
         {
-            string sourceFile = $"{Environment.CurrentDirectory}\\Datasets\\RdpiData.csv";
+            string sourceFile = $"{Environment.CurrentDirectory}\\Datasets\\{fileName}.csv";
             return File.ReadAllLines(sourceFile)
                     .Skip(1)
-                    .Select(v => Rdpi.FromCsv(v))
+                    .Select(line => Rdpi.FromCsv(line))
                     .ToList();
         }
     }

@@ -8,14 +8,14 @@ namespace IgniteAimlDataApp.DataLogic
 {
     public class DataProcess
     {
-        public List<ForecastingData> GetProcessedDataForScore(int id1, int id2, int weeksToPredict)
+        public List<ForecastingData> GetProcessedDataForScore(int storeID1, int itemID2, int weeksToPredict)
         {
             // Load forecasting data and filter by ids needed for prediction.
-            var forecastingData = DataAccess.GetForecastingDataFromLocal()
-                                            .Where(item => item.ID1 == id1 && item.ID2 == id2)
+            var forecastingData = DataAccess.GetForecastingDataFromLocal("ForecastingData")
+                                            .Where(item => item.ID1 == storeID1 && item.ID2 == itemID2)
                                             .ToList();
             // Load rdpi data.
-            var rdpiData = DataAccess.GetRdpiDataFromLocal();
+            var rdpiData = DataAccess.GetRdpiDataFromLocal("RdpiData");
 
             // Add dates for weeks to predict.
             var latestDate = forecastingData.Max(data => data.Time);
@@ -24,8 +24,8 @@ namespace IgniteAimlDataApp.DataLogic
                 latestDate = latestDate.AddDays(7);
                 var forcastingDataItem = new ForecastingData
                 {
-                    ID1 = id1,
-                    ID2 = id2,
+                    ID1 = storeID1,
+                    ID2 = itemID2,
                     Time = latestDate,
                     Value = 0,
                     RDPI = rdpiData.Last().rdpi

@@ -15,14 +15,14 @@ namespace IgniteAimlDataApp
     {
         static void Main(string[] args)
         {
-            Console.Write("Use default StoreId, ItemId and 4 weeks to predict?");
+            Console.Write("Use default StoreId, ItemId and 4 weeks to predict? ");
             var useDefault = Console.ReadLine().ToUpper() == "Y";
             DataProcess dataprocess = new DataProcess();
             var predictionList = new List<ForecastingData>();
 
             if (useDefault)
             {
-                var data = dataprocess.GetProcessedDataForScore(2, 1, 4);
+                var data = dataprocess.GetProcessedDataForScore(storeID1: 2, itemID2: 1, weeksToPredict: 4);
                 predictionList = data.TakeLast(4).ToList();
             }
             else
