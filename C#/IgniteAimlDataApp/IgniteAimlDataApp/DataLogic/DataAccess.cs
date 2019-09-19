@@ -17,14 +17,5 @@ namespace IgniteAimlDataApp.DataLogic
                                            .Select(line => ForecastingData.FromCsv(line))
                                            .ToList();
         }
-
-        public static List<Rdpi> GetRdpiDataFromLocal(string fileName)
-        {
-            string sourceFile = $"{Environment.CurrentDirectory}\\Datasets\\{fileName}.csv";
-            return File.ReadAllLines(sourceFile)
-                    .Skip(1)
-                    .Select(line => Rdpi.FromCsv(line))
-                    .ToList();
-        }
     }
 }

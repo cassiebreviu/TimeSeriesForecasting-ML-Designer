@@ -13,11 +13,23 @@ namespace IgniteAimlDataApp.DataLogic
             var forecastingData = DataAccess.GetForecastingDataFromLocal("ForecastingData")
                                             .Where(item => item.ID1 == storeID1 && item.ID2 == itemID2)
                                             .ToList();
-            // Load rdpi data.
-            var rdpiData = DataAccess.GetRdpiDataFromLocal("RdpiData");
-
             // Add dates for weeks to predict.
-            var latestDate = forecastingData.Max(data => data.Time);
+            forecastingData = AddWeeksToPredict(forecastingData, weeksToPredict, storeID1, itemID2);
+            // Create Time Features
+            forecastingData = CreateTimeFeatures(forecastingData);
+            // Create Fourier Features
+            forecastingData = CreateFourierFeatures(forecastingData);
+            // Create Lag Features
+            forecastingData = CreateLagFeatures(forecastingData);
+            return forecastingData;
+
+        }
+        public List<ForecastingData> AddWeeksToPredict(List<ForecastingData> forecastData, int weeksToPredict, int storeID1, int itemID2)
+        {
+            var latestData = forecastData.OrderByDescending(data => data.Time).First();
+            var latestDate = latestData.Time;
+            var latestRdpi = latestData.RDPI;
+
             for (int i = 0; i < weeksToPredict; i++)
             {
                 latestDate = latestDate.AddDays(7);
@@ -27,7 +39,7 @@ namespace IgniteAimlDataApp.DataLogic
                     ID2 = itemID2,
                     Time = latestDate,
                     Value = 0,
-                    RDPI = rdpiData.Last().rdpi,
+                    RDPI = latestRdpi,
                     DatesInWeek = new List<DateTime>()
                 };
                 // Populate dates in week for new items.
@@ -36,21 +48,11 @@ namespace IgniteAimlDataApp.DataLogic
                     forcastingDataItem.DatesInWeek.Add(dt);
                 }
 
-                forecastingData.Add(forcastingDataItem);
+                forecastData.Add(forcastingDataItem);
             }
-
-
-
-            // Create Time Features
-            forecastingData = CreateTimeFeatures(forecastingData, rdpiData);
-            // Create Fourier Features
-            forecastingData = CreateFourierFeatures(forecastingData);
-            // Create Lag Features
-            forecastingData = CreateLagFeatures(forecastingData);
-            return forecastingData;
+            return forecastData;
 
         }
-
         public List<ForecastingData> CreateFourierFeatures(List<ForecastingData> forecastData)
         {
             // Set seasonality to 52 which is the number of weeks in a year.
@@ -74,20 +76,20 @@ namespace IgniteAimlDataApp.DataLogic
             return forecastData;
         }
 
-        public List<ForecastingData> CreateTimeFeatures(List<ForecastingData> forecastData, List<Rdpi> rdpiData)
+        public List<ForecastingData> CreateTimeFeatures(List<ForecastingData> forecastData)
         {
             foreach (var item in forecastData)
             {
                 item.Year = item.Time.Year;
                 item.Month = item.Time.Month;
                 item.WeekOfMonth = Convert.ToInt32(Math.Ceiling(item.Time.Day / 7.0));
-                item.WeekOfYear =  Convert.ToInt32(Math.Ceiling(item.Time.DayOfYear / 7.0));
+                item.WeekOfYear = Convert.ToInt32(Math.Ceiling(item.Time.DayOfYear / 7.0));
 
                 // 4th Friday in November
-                 item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
-                                                                 date.DayOfWeek == DayOfWeek.Friday
-                                                                 && date.Day > 22
-                                                                 && date.Day < 29);
+                item.IsBlackFriday = item.DatesInWeek.Any(date => date.Month == 11 &&
+                                                                date.DayOfWeek == DayOfWeek.Friday
+                                                                && date.Day > 22
+                                                                && date.Day < 29);
 
                 // 1st Monday in September
                 item.IsUsLaborDay = item.DatesInWeek.Any(date => date.Month == 9
