@@ -76,6 +76,9 @@ namespace IgniteAimlDataApp.DataLogic
 
         public ForecastingData CreateTimeFeatures(ForecastingData forecastData)
         {
+            // Note: These properties could be set at the model level but to better illustrate the 
+            // concepts of time series it was more clear to put them in a method with the other
+            // data time processing steps.
 
             forecastData.Year = forecastData.Time.Year;
             forecastData.Month = forecastData.Time.Month;
