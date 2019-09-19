@@ -1,4 +1,4 @@
-﻿using IgniteAimlDataApp.DataLogic;
+﻿using DataProcessApp.DataLogic;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using IgniteAimlDataApp.Model;
+using DataProcessApp.Model;
 using System.Configuration;
 
-namespace IgniteAimlDataApp
+namespace DataProcessApp
 {
     class Program
     {

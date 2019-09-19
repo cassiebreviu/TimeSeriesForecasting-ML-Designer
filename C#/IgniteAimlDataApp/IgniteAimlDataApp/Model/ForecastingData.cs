@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace IgniteAimlDataApp.Model
+namespace DataProcessApp.Model
 {
     public class ForecastingData
     {
@@ -35,7 +35,6 @@ namespace IgniteAimlDataApp.Model
         public double Lag6 { get; set; }
         public double Lag7 { get; set; }
         public double Lag8 { get; set; }
-
         public double Lag9 { get; set; }
         public double Lag10 { get; set; }
         public double Lag11 { get; set; }
@@ -50,7 +49,6 @@ namespace IgniteAimlDataApp.Model
         public double Lag20 { get; set; }
         public double Lag21 { get; set; }
         public double Lag22 { get; set; }
-
         public double Lag23 { get; set; }
         public double Lag24 { get; set; }
         public double Lag25 { get; set; }
@@ -68,12 +66,6 @@ namespace IgniteAimlDataApp.Model
             forecastingData.Time = Convert.ToDateTime(values[2]);
             forecastingData.Value = Convert.ToDouble(values[3]);
             forecastingData.RDPI = Convert.ToDecimal(values[4]);
-            forecastingData.DatesInWeek = new List<DateTime>();
-
-            for (var dt = forecastingData.Time; dt <= forecastingData.Time.AddDays(6); dt = dt.AddDays(1))
-            {
-                forecastingData.DatesInWeek.Add(dt);
-            }
             return forecastingData;
         }
 
