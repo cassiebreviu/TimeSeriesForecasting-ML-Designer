@@ -1,4 +1,4 @@
-﻿using IgniteAimlDataApp.DataLogic;
+﻿using DataProcessApp.DataLogic;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using IgniteAimlDataApp.Model;
+using DataProcessApp.Model;
 using System.Configuration;
 
-namespace IgniteAimlDataApp
+namespace DataProcessApp
 {
     class Program
     {
@@ -75,7 +75,7 @@ namespace IgniteAimlDataApp
                 // Replace this with the API key for the web service
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
                 // TODO: Update with your URL here.
-                client.BaseAddress = new Uri("");
+                client.BaseAddress = new Uri("http://40.121.15.19:80/api/v1/service/amlstudio-f36a53a818bd4517bf6d31/score?api-version=2.0&format=swagger");
 
                 // WARNING: The 'await' statement below can result in a deadlock
                 // if you are calling this code from the UI thread of an ASP.Net application.
@@ -110,7 +110,7 @@ namespace IgniteAimlDataApp
                 {
                     Console.WriteLine(string.Format("The request failed with status code: {0}", response.StatusCode));
 
-                    // Print the headers - they include the requert ID and the timestamp,
+                    // Print the headers - they include the request ID and the timestamp,
                     // which are useful for debugging the failure
                     Console.WriteLine(response.Headers.ToString());
 

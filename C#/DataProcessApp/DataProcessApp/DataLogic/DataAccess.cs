@@ -1,10 +1,10 @@
-﻿using IgniteAimlDataApp.Model;
+﻿using DataProcessApp.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace IgniteAimlDataApp.DataLogic
+namespace DataProcessApp.DataLogic
 {
     // Get data from local csv datasets.
     public static class DataAccess
